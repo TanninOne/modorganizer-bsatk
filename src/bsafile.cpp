@@ -1,0 +1,141 @@
+/*
+Mod Organizer BSA handling
+
+Copyright (C) 2012 Sebastian Herbord. All rights reserved.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+#include "bsafile.h"
+#include "bsaexception.h"
+#include "filehash.h"
+#include "bsafolder.h"
+#include <climits>
+#include <cstring>
+#include <stdexcept>
+#include <algorithm>
+#include <memory>
+
+
+using std::fstream;
+using std::ifstream;
+using std::ofstream;
+
+
+namespace BSA {
+
+
+static const unsigned long CHUNK_SIZE = 128 * 1024;
+
+
+File::File(std::fstream &file, Folder *folder)
+  : m_Folder(folder), m_New(false), m_ToggleCompressed(false)
+{
+  m_NameHash = readType<BSAHash>(file);
+  m_FileSize = readType<BSAULong>(file);
+  m_DataOffset = readType<BSAULong>(file);
+  if ((m_FileSize & (1 << 30)) != 0) {
+    m_ToggleCompressed = true;
+    m_FileSize ^= (1 << 30);
+  }
+}
+
+
+File::File(const std::string &name, const std::string &sourceFile,
+                    Folder *folder, bool toggleCompressed)
+  : m_Folder(folder), m_New(true), m_Name(name),
+    m_ToggleCompressed(toggleCompressed), m_SourceFile(sourceFile),
+    m_ToggleCompressedWrite(toggleCompressed)
+{
+  m_NameHash = calculateBSAHash(name);
+}
+
+
+std::string File::getFilePath() const
+{
+  std::string folderPath = m_Folder->getFullPath();
+  return m_Folder->getFullPath().substr().append("\\").append(m_Name);
+}
+
+
+void File::writeHeader(fstream &file) const
+{
+  writeType<BSAHash>(file, m_NameHash);
+  BSAULong size = m_FileSize;
+  if (m_ToggleCompressed) {
+    size |= (1 << 30);
+  }
+  writeType<BSAULong>(file, size);
+  writeType<BSAULong>(file, m_DataOffsetWrite);
+}
+
+
+EErrorCode File::writeData(fstream &sourceArchive,
+                           fstream &targetArchive) const
+{
+  m_DataOffsetWrite = static_cast<BSAULong>(targetArchive.tellp());
+  EErrorCode result = ERROR_NONE;
+
+  std::unique_ptr<char> inBuffer(new char[CHUNK_SIZE]);
+
+  if (m_SourceFile.length() == 0) {
+    // copy from source archive
+#pragma message("we may have to compress/decompress!")
+    sourceArchive.seekg(m_DataOffset, fstream::beg);
+
+    try {
+      unsigned long sizeLeft = m_FileSize;
+      while (sizeLeft > 0) {
+        int chunkSize = (std::min)(sizeLeft, CHUNK_SIZE);
+        sourceArchive.read(inBuffer.get(), chunkSize);
+        targetArchive.write(inBuffer.get(), chunkSize);
+        sizeLeft -= chunkSize;
+      }
+    } catch (const std::exception&) {
+      result = ERROR_INVALIDDATA;
+    }
+  } else {
+    // copy from file on disc
+    fstream sourceFile;
+    sourceFile.open(m_SourceFile.c_str());
+    if (!sourceFile.is_open()) {
+      return ERROR_SOURCEFILEMISSING;
+    }
+    sourceFile.seekg(0, fstream::end);
+    m_FileSize = static_cast<BSAULong>(sourceFile.tellg());
+    unsigned long sizeLeft = m_FileSize;
+    sourceFile.seekg(0, fstream::beg);
+    while (sizeLeft > 0) {
+      int chunkSize = (std::min)(sizeLeft, CHUNK_SIZE);
+      sourceFile.read(inBuffer.get(), chunkSize);
+      targetArchive.write(inBuffer.get(), chunkSize);
+      sizeLeft -= chunkSize;
+    }
+
+  }
+  return result;
+}
+
+
+void File::readFileName(fstream &file)
+{
+  m_Name = readZString(file);
+  if (calculateBSAHash(m_Name) != m_NameHash) {
+    throw data_invalid_exception(makeString("invalid name hash for \"%s\" (%llu vs %llu)",
+      m_Name.c_str(), calculateBSAHash(m_Name), m_NameHash));
+  }
+}
+
+}
