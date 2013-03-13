@@ -118,10 +118,7 @@ private:
 };
 
 
-static bool ByOffset(const File::Ptr &LHS, const File::Ptr &RHS)
-{
-  return LHS->getDataOffset() < RHS->getDataOffset();
-}
+extern bool ByOffset(const File::Ptr &LHS, const File::Ptr &RHS);
 
 
 } // namespace BSA

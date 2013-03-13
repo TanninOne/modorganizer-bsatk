@@ -78,7 +78,7 @@ public:
    * adds a new file to the folder
    * @param file the new file to add
    */
-  void addFile(const File::Ptr file) { m_Files.push_back(file); }
+  void addFile(const File::Ptr &file) { m_Files.push_back(file); }
   /**
    * add an empty folder as a subfolder to this one.
    * @param folderName name of the new folder
