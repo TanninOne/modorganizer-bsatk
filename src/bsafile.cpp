@@ -37,6 +37,12 @@ using std::ofstream;
 namespace BSA {
 
 
+bool ByOffset(const File::Ptr &LHS, const File::Ptr &RHS)
+{
+  return LHS->getDataOffset() < RHS->getDataOffset();
+}
+
+
 static const unsigned long CHUNK_SIZE = 128 * 1024;
 
 
