@@ -16,8 +16,7 @@ SOURCES += \
     bsaexception.cpp \
     bsafolder.cpp \
 		bsaarchive.cpp \
-    bsatypes.cpp \
-    bsaarchive.cpp
+    bsatypes.cpp
 
 HEADERS += \
     filehash.h \
@@ -31,6 +30,6 @@ HEADERS += \
 
 #QMAKE_CXXFLAGS+=-std=c++0x
 INCLUDEPATH += "$(ZLIBPATH)" "$(ZLIBPATH)/build" "$(BOOSTPATH)"
-LIBS +=  -L"$(ZLIBPATH)/build/Release" -lzlibstatic
+LIBS += -L"$(ZLIBPATH)/build" -lzlibstatic
 
 DEFINES +=  BOOST_LIB_DIAGNOSTIC
