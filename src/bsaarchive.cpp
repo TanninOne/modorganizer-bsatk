@@ -549,10 +549,15 @@ void Archive::extractFiles(const std::string &targetDirectory,
 
       EErrorCode result = ERROR_NONE;
       unsigned long length = 0;
-      boost::shared_array<unsigned char> buffer = decompress(dataBuffer.first.get(), dataBuffer.second + sizeof(BSAULong),
-                                                                   result, length);
-      if (buffer.get() != NULL) {
-        outputFile.write(reinterpret_cast<char*>(buffer.get()), length);
+      try {
+        boost::shared_array<unsigned char> buffer = decompress(dataBuffer.first.get(), dataBuffer.second + sizeof(BSAULong),
+                                                                     result, length);
+        if (buffer.get() != NULL) {
+          outputFile.write(reinterpret_cast<char*>(buffer.get()), length);
+        }
+      } catch (const std::exception &) {
+#pragma message("report error!")
+        continue;
       }
     } else {
       outputFile.write(reinterpret_cast<char*>(dataBuffer.first.get()), dataBuffer.second);

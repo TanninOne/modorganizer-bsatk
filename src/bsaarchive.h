@@ -180,7 +180,8 @@ private:
 //  EErrorCode extractCompressed(const File &fileInfo, std::ofstream &outFile);
 
   bool defaultCompressed() const { return (m_ArchiveFlags & FLAG_DEFAULTCOMPRESSED) != 0; }
-  bool namePrefixed() const { return (m_ArchiveFlags & FLAG_NAMEPREFIXED) != 0; }
+  // starting with FO3 the bsa may prefix the file name to the file blob if archive flag 0x100 is set
+  bool namePrefixed() const { return (m_Type != TYPE_OBLIVION) && ((m_ArchiveFlags & FLAG_NAMEPREFIXED) != 0); }
 
   BSAULong countFiles() const;
 
