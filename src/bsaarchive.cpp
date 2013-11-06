@@ -109,7 +109,13 @@ EErrorCode Archive::read(const char* fileName)
   m_File.exceptions(std::ios_base::badbit);
 
   try {
-    Header header = readHeader(m_File);
+    Header header;
+    try {
+      header = readHeader(m_File);
+    } catch (const data_invalid_exception &e) {
+      throw data_invalid_exception(makeString("%s (filename: %s)", e.what(), fileName));
+    }
+
     m_Type = header.type;
     m_ArchiveFlags = header.archiveFlags;
 
