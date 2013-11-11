@@ -44,9 +44,9 @@ static unsigned long genHashInt(const unsigned char *pos, const unsigned char *e
 
 BSAHash calculateBSAHash(const std::string &fileName)
 {
-  char fileNameLower[MAX_PATH + 1];
+  char fileNameLower[FILENAME_MAX + 1];
   int i = 0;
-  for (; i < MAX_PATH && fileName[i] != '\0'; ++i) {
+  for (; i < FILENAME_MAX && fileName[i] != '\0'; ++i) {
     fileNameLower[i] = tolower(fileName[i]);
     if (fileNameLower[i] == '\\') {
       fileNameLower[i] = '/';

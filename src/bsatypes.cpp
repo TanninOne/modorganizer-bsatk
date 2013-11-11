@@ -28,10 +28,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 using std::fstream;
 
 
-#ifndef MAX_PATH
+/*#ifndef MAX_PATH
 #define MAX_PATH PATH_MAX
 #endif // MAX_PATH
-
+*/
 
 std::string readBString(fstream &file)
 {
@@ -55,9 +55,9 @@ void writeBString(fstream &file, const std::string &string)
 
 std::string readZString(fstream &file)
 {
-  char buffer[MAX_PATH];
-  memset(buffer, '\0', MAX_PATH);
-  file.getline(buffer, MAX_PATH, '\0');
+  char buffer[FILENAME_MAX];
+  memset(buffer, '\0', FILENAME_MAX);
+  file.getline(buffer, FILENAME_MAX, '\0');
   return std::string(buffer);
 }
 

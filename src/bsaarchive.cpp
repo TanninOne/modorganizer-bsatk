@@ -554,7 +554,7 @@ void Archive::extractFiles(const std::string &targetDirectory,
       }
 
       EErrorCode result = ERROR_NONE;
-      unsigned long length = 0;
+      BSAULong length = 0UL;
       try {
         boost::shared_array<unsigned char> buffer = decompress(dataBuffer.first.get(), dataBuffer.second + sizeof(BSAULong),
                                                                      result, length);
