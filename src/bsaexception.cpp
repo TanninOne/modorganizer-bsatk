@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <cstdarg>
 #include <stdio.h>
 
+#pragma warning( disable : 4996 )
 
 std::string makeString(const char *format, ...)
 {
