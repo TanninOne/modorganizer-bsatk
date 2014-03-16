@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 #ifdef WIN32
-
 #include <Windows.h>
 
 typedef unsigned long BSAULong;

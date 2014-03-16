@@ -53,7 +53,7 @@ public:
   /**
    * @return the number of subfolders within this folder
    */
-  unsigned int getNumSubFolders() const { return m_SubFolders.size(); }
+  unsigned int getNumSubFolders() const { return static_cast<unsigned int>(m_SubFolders.size()); }
   /**
    * @param index index of a subfolder within this folder
    * @return a descriptor for the subfolder
@@ -63,7 +63,7 @@ public:
   /**
    * @return the number of files in this folder
    */
-  unsigned int getNumFiles() const { return m_Files.size(); }
+  unsigned int getNumFiles() const { return static_cast<unsigned int>(m_Files.size()); }
   /**
    * @return the number of files in this folder and subfolder
    */

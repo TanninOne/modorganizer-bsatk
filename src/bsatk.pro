@@ -29,6 +29,7 @@ HEADERS += \
 
 
 #QMAKE_CXXFLAGS+=-std=c++0x
+QMAKE_CXXFLAGS+=-DNOMINMAX
 INCLUDEPATH += "$(ZLIBPATH)" "$(ZLIBPATH)/build" "$(BOOSTPATH)"
 LIBS += -L"$(ZLIBPATH)/build" -lzlibstatic
 
