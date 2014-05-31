@@ -80,9 +80,11 @@ public:
   /**
    * read the archive from file
    * @param fileName name of the file to read from
+   * @param testHashes if true, the hashes of file names will be checked to ensure the file is valid.
+   *                    This can be skipped for performance reasons
    * @return ERROR_NONE on success or an error code
    */
-  EErrorCode read(const char *fileName);
+  EErrorCode read(const char *fileName, bool testHashes);
   /**
    * write the archive to disc
    * @param fileName name of the file to write to

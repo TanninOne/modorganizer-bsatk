@@ -121,7 +121,7 @@ private:
    */
   Folder::Ptr addFolder(std::fstream &file, BSAULong fileNamesLength, BSAULong &endPos);
 
-  bool resolveFileNames(std::fstream &file);
+  bool resolveFileNames(std::fstream &file, bool testHashes);
 
   void writeHeader(std::fstream &file) const;
   void writeData(std::fstream &file, BSAULong fileNamesLength) const;

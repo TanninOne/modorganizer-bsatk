@@ -60,7 +60,7 @@ File::File(std::fstream &file, Folder *folder)
 
 
 File::File(const std::string &name, const std::string &sourceFile,
-                    Folder *folder, bool toggleCompressed)
+           Folder *folder, bool toggleCompressed)
   : m_Folder(folder), m_New(true), m_Name(name),
     m_ToggleCompressed(toggleCompressed), m_SourceFile(sourceFile),
     m_ToggleCompressedWrite(toggleCompressed)
@@ -135,12 +135,14 @@ EErrorCode File::writeData(fstream &sourceArchive,
 }
 
 
-void File::readFileName(fstream &file)
+void File::readFileName(fstream &file, bool testHashes)
 {
   m_Name = readZString(file);
-  if (calculateBSAHash(m_Name) != m_NameHash) {
-    throw data_invalid_exception(makeString("invalid name hash for \"%s\" (%llu vs %llu)",
-      m_Name.c_str(), calculateBSAHash(m_Name), m_NameHash));
+  if (testHashes) {
+    if (calculateBSAHash(m_Name) != m_NameHash) {
+      throw data_invalid_exception(makeString("invalid name hash for \"%s\" (%llu vs %llu)",
+        m_Name.c_str(), calculateBSAHash(m_Name), m_NameHash));
+    }
   }
 }
 

@@ -159,13 +159,13 @@ Folder::Ptr Folder::addFolder(std::fstream &file, BSAULong fileNamesLength, BSAU
 }
 
 
-bool Folder::resolveFileNames(std::fstream &file)
+bool Folder::resolveFileNames(std::fstream &file, bool testHashes)
 {
   bool hashesValid = true;
   for (std::vector<File::Ptr>::iterator iter = m_Files.begin();
        iter != m_Files.end(); ++iter) {
     try {
-      (*iter)->readFileName(file);
+      (*iter)->readFileName(file, testHashes);
     } catch (const std::exception&) {
       hashesValid = false;
     }

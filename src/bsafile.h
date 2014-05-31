@@ -99,7 +99,7 @@ private:
 
   void setFileSize(BSAULong fileSize) { m_FileSize = fileSize; }
 
-  void readFileName(std::fstream &file);
+  void readFileName(std::fstream &file, bool testHashes);
 
 private:
 

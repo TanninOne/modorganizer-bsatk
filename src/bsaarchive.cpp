@@ -101,14 +101,13 @@ Archive::Header Archive::readHeader(std::fstream &infile)
 }
 
 
-EErrorCode Archive::read(const char* fileName)
+EErrorCode Archive::read(const char* fileName, bool testHashes)
 {
   m_File.open(fileName, fstream::in | fstream::binary);
   if (!m_File.is_open()) {
     return ERROR_FILENOTFOUND;
   }
   m_File.exceptions(std::ios_base::badbit);
-
   try {
     Header header;
     try {
@@ -132,7 +131,7 @@ EErrorCode Archive::read(const char* fileName)
     bool hashesValid = true;
     for (std::vector<Folder::Ptr>::iterator iter = folders.begin();
          iter != folders.end(); ++iter) {
-      if (!(*iter)->resolveFileNames(m_File)) {
+      if (!(*iter)->resolveFileNames(m_File, testHashes)) {
         hashesValid = false;
       }
     }
@@ -330,20 +329,6 @@ EErrorCode Archive::write(const char *fileName)
          folderIter != folders.end(); ++folderIter) {
       (*folderIter)->writeData(outfile, fileNamesLength);
     }
-
-/*
-    unsigned long filesEndPos = outfile.tellg();
-    m_Folders.clear();
-    for (unsigned long i = 0; i < folderCount; ++i) {
-      m_Folders.push_back(Folder(outfile, fileNameLength, filesEndPos));
-    }
-
-    outfile.seekg(filesEndPos);
-
-    for (std::vector<Folder>::iterator iter = m_Folders.begin();
-         iter != m_Folders.end(); ++iter) {
-      iter->resolveFileNames(outfile);
-    } */
 
     outfile.close();
     return ERROR_NONE;
