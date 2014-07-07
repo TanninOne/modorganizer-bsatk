@@ -15,7 +15,7 @@ SOURCES += \
     bsafile.cpp \
     bsaexception.cpp \
     bsafolder.cpp \
-		bsaarchive.cpp \
+    bsaarchive.cpp \
     bsatypes.cpp
 
 HEADERS += \
