@@ -10,6 +10,10 @@ TARGET = bsatk
 TEMPLATE = lib
 CONFIG += staticlib
 
+!include(../LocalPaths.pri) {
+  message("paths to required libraries need to be set up in LocalPaths.pri")
+}
+
 SOURCES += \
     filehash.cpp \
     bsafile.cpp \
@@ -28,9 +32,7 @@ HEADERS += \
     bsaarchive.h
 
 
-#QMAKE_CXXFLAGS+=-std=c++0x
-QMAKE_CXXFLAGS+=-DNOMINMAX
-INCLUDEPATH += "$(ZLIBPATH)" "$(ZLIBPATH)/build" "$(BOOSTPATH)"
-LIBS += -L"$(ZLIBPATH)/build" -lzlibstatic
+INCLUDEPATH += "$${ZLIBPATH}" "$${ZLIBPATH}/build" "$${BOOSTPATH}"
+LIBS += -L"$${ZLIBPATH}/build" -lzlibstatic
 
-DEFINES +=  BOOST_LIB_DIAGNOSTIC
+DEFINES += BOOST_LIB_DIAGNOSTIC NOMINMAX

@@ -30,8 +30,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <queue>
 #ifndef Q_MOC_RUN
 #include <boost/function.hpp>
-#endif // Q_MOC_RUN
 #include <boost/shared_array.hpp>
+#endif // Q_MOC_RUN
 
 
 namespace boost {
