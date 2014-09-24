@@ -352,7 +352,7 @@ EErrorCode Archive::extractDirect(File::Ptr file, std::ofstream &outFile) const
     readBString(m_File);
   }
 
-  std::unique_ptr<char> inBuffer(new char[CHUNK_SIZE]);
+  std::unique_ptr<char[]> inBuffer(new char[CHUNK_SIZE]);
 
   try {
     unsigned long sizeLeft = file->m_FileSize;
@@ -384,10 +384,7 @@ boost::shared_array<unsigned char> Archive::decompress(unsigned char *inBuffer, 
   boost::shared_array<unsigned char> outBuffer(new unsigned char[outSize]);
 
   z_stream stream;
-  unsigned long decompressed = 0;
   try {
-    unsigned long sizeLeft = inSize;
-
     stream.zalloc = Z_NULL;
     stream.zfree = Z_NULL;
     stream.opaque = Z_NULL;
@@ -400,7 +397,6 @@ boost::shared_array<unsigned char> Archive::decompress(unsigned char *inBuffer, 
     }
 
     stream.avail_in = inSize;
-    sizeLeft -= stream.avail_in;
 
     stream.next_in = static_cast<Bytef*>(inBuffer);
 
@@ -412,7 +408,6 @@ boost::shared_array<unsigned char> Archive::decompress(unsigned char *inBuffer, 
 #pragma message("pass result code to caller")
         throw std::runtime_error("invalid data");
       }
-      decompressed = outSize - stream.avail_out;
     } while (stream.avail_out == 0);
     inflateEnd(&stream);
     return outBuffer;
@@ -440,7 +435,7 @@ EErrorCode Archive::extractCompressed(File::Ptr file, std::ofstream &outFile) co
   }
 
   BSAULong inSize = file->m_FileSize + sizeof(BSAULong); // file data has original size prepended
-  std::unique_ptr<unsigned char> inBuffer(new unsigned char[inSize]);
+  std::unique_ptr<unsigned char[]> inBuffer(new unsigned char[inSize]);
   m_File.read(reinterpret_cast<char*>(inBuffer.get()), inSize);
   BSAULong length = 0L;
   boost::shared_array<unsigned char> buffer = decompress(inBuffer.get(), inSize, result, length);
@@ -552,8 +547,8 @@ void Archive::extractFiles(const std::string &targetDirectory,
       }
 
       EErrorCode result = ERROR_NONE;
-      BSAULong length = 0UL;
       try {
+        BSAULong length = 0UL;
         boost::shared_array<unsigned char> buffer = decompress(dataBuffer.first.get(), dataBuffer.second + sizeof(BSAULong),
                                                                result, length);
         if (buffer.get() != NULL) {
@@ -574,7 +569,7 @@ void Archive::createFolders(const std::string &targetDirectory, Folder::Ptr fold
 {
   for (std::vector<Folder::Ptr>::iterator iter = folder->m_SubFolders.begin();
        iter != folder->m_SubFolders.end(); ++iter) {
-    std::string subDirName = targetDirectory.substr().append("\\").append((*iter)->getName());
+    std::string subDirName = targetDirectory + "\\" + (*iter)->getName();
     ::CreateDirectoryA(subDirName.c_str(), NULL);
     createFolders(subDirName, *iter);
   }
@@ -637,7 +632,7 @@ EErrorCode Archive::extractAll(const char *outputDirectory,
 }
 
 
-bool Archive::compressed(const File::Ptr file)
+bool Archive::compressed(const File::Ptr &file)
 {
   return ((defaultCompressed() && !file->compressToggled()) ||
           (!defaultCompressed() && file->compressToggled()));

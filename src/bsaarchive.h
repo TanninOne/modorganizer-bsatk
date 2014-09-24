@@ -135,7 +135,7 @@ public:
    * @param file the file to check
    * @return true if the file is compressed, false otherwise
    */
-  bool compressed(const File::Ptr file);
+  bool compressed(const File::Ptr &file);
   /**
    * create a new file to be placed in this archive. The new file is NOT
    * added to a folder, use BSA::Folder::addFile for that

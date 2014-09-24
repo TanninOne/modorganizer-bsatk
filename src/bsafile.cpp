@@ -71,8 +71,7 @@ File::File(const std::string &name, const std::string &sourceFile,
 
 std::string File::getFilePath() const
 {
-  std::string folderPath = m_Folder->getFullPath();
-  return m_Folder->getFullPath().substr().append("\\").append(m_Name);
+  return m_Folder->getFullPath() + "\\" + m_Name;
 }
 
 
@@ -94,7 +93,7 @@ EErrorCode File::writeData(fstream &sourceArchive,
   m_DataOffsetWrite = static_cast<BSAULong>(targetArchive.tellp());
   EErrorCode result = ERROR_NONE;
 
-  std::unique_ptr<char> inBuffer(new char[CHUNK_SIZE]);
+  std::unique_ptr<char[]> inBuffer(new char[CHUNK_SIZE]);
 
   if (m_SourceFile.length() == 0) {
     // copy from source archive
