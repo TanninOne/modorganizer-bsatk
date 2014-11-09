@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #endif // MAX_PATH
 
 
+
+
 static unsigned long genHashInt(const unsigned char *pos, const unsigned char *end)
 {
   unsigned long hash = 0;
@@ -41,28 +43,32 @@ static unsigned long genHashInt(const unsigned char *pos, const unsigned char *e
   return hash;
 }
 
-
+/**
+ * @brief calculateBSAHash
+ * @param fileName
+ * @return
+ * @note the hash calculated for folders seem to be wrong
+ */
 BSAHash calculateBSAHash(const std::string &fileName)
 {
   char fileNameLower[FILENAME_MAX + 1];
   int i = 0;
   for (; i < FILENAME_MAX && fileName[i] != '\0'; ++i) {
     fileNameLower[i] = tolower(fileName[i]);
-    if (fileNameLower[i] == '\\') {
-      fileNameLower[i] = '/';
+    if (fileNameLower[i] == '/') {
+      fileNameLower[i] = '\\';
     }
   }
   fileNameLower[i] = '\0';
 
   unsigned char *fileNameLowerU = reinterpret_cast<unsigned char*>(fileNameLower);
 
+  int length = strlen(fileNameLower);
   char* ext = strrchr(fileNameLower, '.');
   if (ext == NULL) {
-    ext = fileNameLower + strlen(fileNameLower);
+    ext = fileNameLower + length;
   }
   unsigned char *extU = reinterpret_cast<unsigned char*>(ext);
-
-  int length = ext - fileNameLower;
 
   BSAHash hash = 0ULL;
 

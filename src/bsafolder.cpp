@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "bsafolder.h"
 #include "bsafile.h"
 #include "bsaarchive.h"
+#include "bsaexception.h"
 
 
 using std::fstream;
@@ -51,6 +52,7 @@ Folder::Ptr Folder::readFolder(std::fstream &file, BSAULong fileNamesLength,
   file.seekg(result->m_Offset - fileNamesLength, fstream::beg);
 
   result->m_Name = readBString(file);
+
   for (unsigned long i = 0UL; i < result->m_FileCount; ++i) {
     result->m_Files.push_back(File::Ptr(new File(file, result.get())));
   }
@@ -155,6 +157,7 @@ Folder::Ptr Folder::addFolder(std::fstream &file, BSAULong fileNamesLength, BSAU
 {
   Folder::Ptr temp = readFolder(file, fileNamesLength, endPos);
   addFolderInt(temp);
+
   return temp;
 }
 

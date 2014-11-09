@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <fstream>
 #include <string>
-
+#include "bsaexception.h"
 
 #ifdef WIN32
 #include <Windows.h>
@@ -50,7 +50,9 @@ template <typename T> static T readType(std::fstream &file)
     char buffer[sizeof(T)];
     T value;
   };
-  file.read(buffer, sizeof(T));
+  if (!file.read(buffer, sizeof(T))) {
+    throw data_invalid_exception("can't read from bsa");
+  }
   return value;
 }
 

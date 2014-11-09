@@ -39,7 +39,9 @@ std::string readBString(fstream &file)
   unsigned char length = readType<unsigned char>(file);
   char buffer[256];
   if (length > 0) {
-    file.read(buffer, length);
+    if (!file.read(buffer, length)) {
+      throw data_invalid_exception("can't read from bsa");
+    }
   }
   buffer[length] = '\0';
   return std::string(buffer);
@@ -58,7 +60,9 @@ std::string readZString(fstream &file)
 {
   char buffer[FILENAME_MAX];
   memset(buffer, '\0', FILENAME_MAX);
-  file.getline(buffer, FILENAME_MAX, '\0');
+  if (!file.getline(buffer, FILENAME_MAX, '\0')) {
+    throw data_invalid_exception("can't read from bsa");
+  }
   return std::string(buffer);
 }
 

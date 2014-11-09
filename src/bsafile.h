@@ -74,6 +74,7 @@ private:
    * @param folder the folder to add the file to
    */
   File(std::fstream &file, Folder *folder);
+
   /**
    * construct from loose file
    * @param name the base name of the file inside the archive
