@@ -551,7 +551,7 @@ void Archive::extractFiles(const std::string &targetDirectory,
         BSAULong length = 0UL;
         boost::shared_array<unsigned char> buffer = decompress(dataBuffer.first.get(), dataBuffer.second + sizeof(BSAULong),
                                                                result, length);
-        if (buffer.get() != NULL) {
+        if (buffer.get() != nullptr) {
           outputFile.write(reinterpret_cast<char*>(buffer.get()), length);
         }
       } catch (const std::exception &) {
@@ -570,7 +570,7 @@ void Archive::createFolders(const std::string &targetDirectory, Folder::Ptr fold
   for (std::vector<Folder::Ptr>::iterator iter = folder->m_SubFolders.begin();
        iter != folder->m_SubFolders.end(); ++iter) {
     std::string subDirName = targetDirectory + "\\" + (*iter)->getName();
-    ::CreateDirectoryA(subDirName.c_str(), NULL);
+    ::CreateDirectoryA(subDirName.c_str(), nullptr);
     createFolders(subDirName, *iter);
   }
 }
@@ -641,7 +641,7 @@ bool Archive::compressed(const File::Ptr &file)
 File::Ptr Archive::createFile(const std::string &name, const std::string &sourceName,
                               bool compressed)
 {
-  return File::Ptr(new File(name, sourceName, NULL,
+  return File::Ptr(new File(name, sourceName, nullptr,
                             defaultCompressed() != compressed));
 }
 

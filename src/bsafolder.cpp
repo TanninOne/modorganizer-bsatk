@@ -32,7 +32,7 @@ namespace BSA {
 
 
 Folder::Folder()
-  : m_Parent(NULL), m_Name()
+  : m_Parent(nullptr), m_Name()
 {
   m_NameHash = calculateBSAHash(m_Name);
   m_FileCount = 0;
@@ -102,7 +102,7 @@ EErrorCode Folder::writeFileData(std::fstream &sourceFile,
 
 std::string Folder::getFullPath() const
 {
-  if (m_Parent != NULL) {
+  if (m_Parent != nullptr) {
     std::string temp = m_Parent->getFullPath();
     if (temp.length() != 0) {
       return temp.append("\\").append(m_Name);
