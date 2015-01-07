@@ -139,7 +139,7 @@ void File::readFileName(fstream &file, bool testHashes)
   m_Name = readZString(file);
   if (testHashes) {
     if (calculateBSAHash(m_Name) != m_NameHash) {
-      throw data_invalid_exception(makeString("invalid name hash for \"%s\" (%llu vs %llu)",
+      throw data_invalid_exception(makeString("invalid name hash for \"%s\" (%lx vs %lx)",
         m_Name.c_str(), calculateBSAHash(m_Name), m_NameHash));
     }
   }

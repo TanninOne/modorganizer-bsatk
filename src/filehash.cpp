@@ -63,40 +63,45 @@ BSAHash calculateBSAHash(const std::string &fileName)
 
   unsigned char *fileNameLowerU = reinterpret_cast<unsigned char*>(fileNameLower);
 
-  int length = strlen(fileNameLower);
+  size_t length = strlen(fileNameLower);
+
   char* ext = strrchr(fileNameLower, '.');
   if (ext == NULL) {
     ext = fileNameLower + length;
   }
+
+  size_t extLen = strlen(ext);
+  length -= extLen;
+
   unsigned char *extU = reinterpret_cast<unsigned char*>(ext);
 
-  BSAHash hash = 0ULL;
+  BSAHash hash1 = 0ULL;
 
   if (length > 0) {
-    hash = *(extU - 1) |
-           ((length > 2 ? *(ext - 2) : 0) << 8) |
-           (length << 16) |
-           (fileNameLowerU[0] << 24);
+    hash1 = static_cast<BSAHash>(
+           fileNameLowerU[length - 1]
+         | ((length > 2 ? fileNameLowerU[length - 2] : 0) << 8)
+         | (length << 16)
+         | (fileNameLowerU[0] << 24)
+        );
   }
 
-  if (strlen(ext) > 0) {
+  if (extLen > 0) {
     if (strcmp(ext + 1, "kf") == 0) {
-      hash |= 0x80;
+      hash1 |= 0x80;
     } else if (strcmp(ext + 1, "nif") == 0) {
-      hash |= 0x8000;
+      hash1 |= 0x8000;
     } else if (strcmp(ext + 1, "dds") == 0) {
-      hash |= 0x8080;
+      hash1 |= 0x8080;
     } else if (strcmp(ext + 1, "wav") == 0) {
-      hash |= 0x80000000;
+      hash1 |= 0x80000000;
     }
 
-    BSAHash temp = static_cast<BSAHash>(genHashInt(
-                fileNameLowerU + 1, extU - 2));
-    temp += static_cast<BSAHash>(genHashInt(
-                extU, extU + strlen(ext)));
+    BSAHash hash2 = static_cast<BSAHash>(genHashInt(fileNameLowerU + 1, extU - 2))
+                  + static_cast<BSAHash>(genHashInt(extU, extU + strlen(ext)));
 
-    hash |= (temp & 0xFFFFFFFF) << 32;
+    hash1 |= (hash2 & 0xFFFFFFFF) << 32;
   }
 
-  return hash;
+  return hash1;
 }
