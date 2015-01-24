@@ -66,7 +66,7 @@ BSAHash calculateBSAHash(const std::string &fileName)
   size_t length = strlen(fileNameLower);
 
   char* ext = strrchr(fileNameLower, '.');
-  if (ext == NULL) {
+  if (ext == nullptr) {
     ext = fileNameLower + length;
   }
 
