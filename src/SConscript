@@ -7,7 +7,8 @@ modules = [
     'Gui'
 ]
 
-env.EnableQt4Modules(['Qt' + n for n in modules], debug = env['CONFIG'] == 'debug')
+env.EnableQt4Modules(['Qt' + n for n in modules],
+                     debug = env['CONFIG'] == 'debug')
 
 #CONFIG(debug, debug|release) {
 #  LIBS += -L$$OUT_PWD/../bsatk/debug
