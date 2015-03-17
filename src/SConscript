@@ -29,6 +29,6 @@ env.AppendUnique(CPPDEFINES = [
 ])
 
 env.AppendUnique(CPPPATH = [
-    '$BOOST_PATH',
-    '$ZLIB_PATH'
+    '${BOOSTPATH}',
+    '${ZLIBPATH}'
 ])
