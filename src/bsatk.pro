@@ -36,3 +36,6 @@ INCLUDEPATH += "$${ZLIBPATH}" "$${ZLIBPATH}/build" "$${BOOSTPATH}"
 LIBS += -L"$${ZLIBPATH}/build" -lzlibstatic
 
 DEFINES += BOOST_LIB_DIAGNOSTIC NOMINMAX
+
+OTHER_FILES=\
+    SConscript
