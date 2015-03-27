@@ -1,0 +1,17 @@
+Import('qt_env')
+
+env = qt_env.Clone()
+
+env.EnableQtModules('Core', 'Gui')
+
+env.StaticLibrary('bsatk', env.Glob('*.cpp'))
+
+env.AppendUnique(CPPDEFINES = [
+    'BOOST_LIB_DIAGNOSTIC',
+    'NOMINMAX',
+])
+
+env.AppendUnique(CPPPATH = [
+    '${BOOSTPATH}',
+    '${ZLIBPATH}'
+])
