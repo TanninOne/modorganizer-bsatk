@@ -8,7 +8,7 @@ QT       -= core gui
 
 TARGET = bsatk
 TEMPLATE = lib
-CONFIG += staticlib
+CONFIG += staticlib c++11
 
 !include(../LocalPaths.pri) {
   message("paths to required libraries need to be set up in LocalPaths.pri")
@@ -36,6 +36,9 @@ INCLUDEPATH += "$${ZLIBPATH}" "$${ZLIBPATH}/build" "$${BOOSTPATH}"
 LIBS += -L"$${ZLIBPATH}/build" -lzlibstatic
 
 DEFINES += BOOST_LIB_DIAGNOSTIC NOMINMAX
+
+gcc:QMAKE_CXXFLAGS += -Wno-unknown-pragmas -march=i686 -fno-tree-vectorize
+
 
 OTHER_FILES=\
     SConscript
