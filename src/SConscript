@@ -1,8 +1,6 @@
-Import('qt_env')
+Import('env')
 
-env = qt_env.Clone()
-
-env.EnableQtModules('Core', 'Gui')
+env = env.Clone()
 
 env.AppendUnique(CPPDEFINES = [
     'BOOST_LIB_DIAGNOSTIC',
@@ -15,6 +13,3 @@ env.AppendUnique(CPPPATH = [
 ])
 
 env.StaticLibrary('bsatk', env.Glob('*.cpp'))
-
-res = env['QT_USED_MODULES']
-Return('res')
