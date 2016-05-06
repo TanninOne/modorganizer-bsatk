@@ -50,7 +50,8 @@ std::string readBString(fstream &file)
 
 void writeBString(fstream &file, const std::string &string)
 {
-  unsigned int length = std::min<unsigned int>(string.length(), 255);
+  unsigned int length
+      = std::min<unsigned int>(static_cast<unsigned int>(string.length()), 255);
   writeType<unsigned char>(file, length + 1);
   file.write(string.c_str(), length + 1);
 }
