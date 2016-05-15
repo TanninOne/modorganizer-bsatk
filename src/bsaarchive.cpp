@@ -172,12 +172,12 @@ std::vector<std::string> Archive::collectFileNames() const
 
 BSAULong Archive::countCharacters(const std::vector<std::string> &list) const
 {
-  BSAULong sum = 0;
+  size_t sum = 0;
   for (std::vector<std::string>::const_iterator iter = list.begin();
        iter != list.end(); ++iter) {
     sum += iter->length() + 1;
   }
-  return sum;
+  return static_cast<BSAULong>(sum);
 }
 
 #ifndef WIN32
@@ -186,7 +186,7 @@ BSAULong Archive::countCharacters(const std::vector<std::string> &list) const
 
 static bool endsWith(const std::string &fileName, const char *extension)
 {
-  unsigned long endLength = strlen(extension);
+  size_t endLength = strlen(extension);
   if (fileName.length() < endLength) {
     return false;
   }
@@ -278,17 +278,18 @@ EErrorCode Archive::write(const char *fileName)
        folderIter != folders.end(); ++folderIter) {
     std::string fullPath = (*folderIter)->getFullPath();
     folderNames.push_back(fullPath);
-    folderNamesLength += fullPath.length();
+    folderNamesLength += static_cast<BSAULong>(fullPath.length());
     for (std::vector<File::Ptr>::const_iterator fileIter = (*folderIter)->m_Files.begin();
          fileIter != (*folderIter)->m_Files.end(); ++fileIter) {
       fileNames.push_back((*fileIter)->m_Name);
-      fileNamesLength += (*fileIter)->m_Name.length();
+      fileNamesLength += static_cast<BSAULong>((*fileIter)->m_Name.length());
     }
   }
 
   try {
-    writeHeader(outfile, determineFileFlags(fileNames), folderNames.size(),
-                folderNamesLength, fileNamesLength);
+    writeHeader(outfile, determineFileFlags(fileNames),
+                static_cast<BSAULong>(folderNames.size()), folderNamesLength,
+                fileNamesLength);
 #pragma message("folders (and files?) need to be sorted by hash!")
     // dummy-pass: before we can store the actual folder data
 
@@ -477,7 +478,7 @@ void Archive::readFiles(std::queue<FileInfo> &queue, boost::mutex &mutex,
 
     FileInfo fileInfo;
     fileInfo.file = *begin;
-    BSAULong size = fileInfo.file->m_FileSize;
+    size_t size = static_cast<size_t>(fileInfo.file->m_FileSize);
 
     m_File.seekg(fileInfo.file->m_DataOffset);
     if (namePrefixed()) {
@@ -488,7 +489,9 @@ void Archive::readFiles(std::queue<FileInfo> &queue, boost::mutex &mutex,
       }
       size -= fullName.length() + 1;
     }
-    fileInfo.data = std::make_pair(boost::shared_array<unsigned char>(new unsigned char[size]), size);
+    fileInfo.data = std::make_pair(
+        boost::shared_array<unsigned char>(new unsigned char[size]),
+        static_cast<BSAULong>(size));
     m_File.read(reinterpret_cast<char*>(fileInfo.data.first.get()), size);
 
     {
@@ -599,11 +602,10 @@ EErrorCode Archive::extractAll(const char *outputDirectory,
                                          boost::ref(bufferCount), boost::ref(queueFree),
                                          fileList.begin(), fileList.end()));
 
-  boost::thread extractThread(boost::bind(&Archive::extractFiles, this,
-                              outputDirectory,
-                              boost::ref(buffers), boost::ref(queueMutex),
-                              boost::ref(bufferCount), boost::ref(queueFree),
-                              fileList.size(), overwrite, boost::ref(filesDone)));
+  boost::thread extractThread(boost::bind(
+      &Archive::extractFiles, this, outputDirectory, boost::ref(buffers),
+      boost::ref(queueMutex), boost::ref(bufferCount), boost::ref(queueFree),
+      static_cast<int>(fileList.size()), overwrite, boost::ref(filesDone)));
 
   bool readerDone  = false;
   bool extractDone = false;
@@ -621,8 +623,11 @@ EErrorCode Archive::extractAll(const char *outputDirectory,
         bufferCount.post();
       }
     }
-    int index = (std::min)(static_cast<size_t>(filesDone), fileList.size() - 1);
-    if (!progress((filesDone * 100) / fileList.size(), fileList[index]->getName()) && !canceled) {
+    size_t index
+        = (std::min)(static_cast<size_t>(filesDone), fileList.size() - 1);
+    if (!progress((filesDone * 100) / static_cast<int>(fileList.size()),
+                  fileList[index]->getName())
+        && !canceled) {
       readerThread.interrupt();
       canceled = true; // don't interrupt repeatedly
     }

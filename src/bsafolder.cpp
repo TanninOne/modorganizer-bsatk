@@ -70,7 +70,7 @@ Folder::Ptr Folder::readFolder(std::fstream &file, BSAULong fileNamesLength,
 void Folder::writeHeader(std::fstream &file) const
 {
   writeType<BSAHash>(file, m_NameHash);
-  writeType<BSAULong>(file, m_Files.size());
+  writeType<BSAULong>(file, static_cast<BSAULong>(m_Files.size()));
   writeType<BSAULong>(file, m_OffsetWrite);
 }
 
@@ -123,7 +123,7 @@ void Folder::addFolderInt(Folder::Ptr folder)
     // for folder to be a subfolder of iter, the name of iter has to be the
     // first path component of folders path and there has to be room left for a 
     // backslash and the name of folder itself
-    int nameLength = (*iter)->m_Name.length();
+    size_t nameLength = (*iter)->m_Name.length();
     if ((folder->m_Name.length() > (*iter)->m_Name.length()) &&
         (folder->m_Name.compare(0, (*iter)->m_Name.length(), (*iter)->m_Name) == 0) &&
         ((folder->m_Name[nameLength] == '\\') ||
@@ -188,7 +188,7 @@ unsigned int Folder::countFiles() const
        iter != m_SubFolders.end(); ++iter) {
     result += (*iter)->countFiles();
   }
-  return result + m_Files.size();
+  return result + static_cast<unsigned int>(m_Files.size());
 }
 
 const File::Ptr Folder::getFile(unsigned int index) const
