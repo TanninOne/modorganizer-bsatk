@@ -33,6 +33,7 @@ namespace BSA {
 
 
 class Folder;
+class Archive;
 
 class File {
 
