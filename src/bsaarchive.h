@@ -26,27 +26,26 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "errorcodes.h"
 #include "bsatypes.h"
 #include "bsafolder.h"
+#include "semaphore.h"
 #include <vector>
 #include <queue>
-#ifndef Q_MOC_RUN
-#include <boost/function.hpp>
-#include <boost/shared_array.hpp>
-#endif // Q_MOC_RUN
-
-
-namespace boost {
-  class mutex;
-  namespace interprocess {
-    class interprocess_semaphore;
-  }
-}
+#include <functional>
+#include <memory>
+#include <mutex>
 
 
 namespace BSA {
 
-
+template<typename T>
+struct array_deleter
+{
+  void operator ()(const T *p)
+  { 
+    delete[] p; 
+  }
+};
+  
 class File;
-
 
 /**
  * @brief top level structure to represent a bsa file
@@ -62,7 +61,7 @@ public:
     TYPE_SKYRIM = TYPE_FALLOUT3
   };
 
-  typedef std::pair<boost::shared_array<unsigned char>, BSAULong> DataBuffer;
+  typedef std::pair<std::shared_ptr<unsigned char>, BSAULong> DataBuffer;
 
 private:
 
@@ -128,7 +127,7 @@ public:
    * @return ERROR_NONE on success or an error code
    */
   EErrorCode extractAll(const char *outputDirectory,
-                        const boost::function<bool (int value, std::string fileName)> &progress,
+                        const std::function<bool (int value, std::string fileName)> &progress,
                         bool overwrite = true);
 
   /**
@@ -173,7 +172,7 @@ private:
 
   static EType typeFromID(BSAULong typeID);
 
-  static boost::shared_array<unsigned char> decompress(unsigned char *inBuffer, BSAULong inSize, EErrorCode &result, BSAULong &outSize);
+  static std::shared_ptr<unsigned char> decompress(unsigned char *inBuffer, BSAULong inSize, EErrorCode &result, BSAULong &outSize);
 
 
   BSAULong typeToID(EType type);
@@ -205,17 +204,19 @@ private:
   void createFolders(const std::string &targetDirectory, Folder::Ptr folder);
 
   void readFiles(std::queue<FileInfo> &queue,
-                 boost::mutex &mutex,
-                 boost::interprocess::interprocess_semaphore &bufferCount,
-                 boost::interprocess::interprocess_semaphore &queueFree,
+                 std::mutex &mutex,
+                 Semaphore &bufferCount,
+                 Semaphore &queueFree,
                  std::vector<File::Ptr>::iterator begin,
-                 std::vector<File::Ptr>::iterator end);
+                 std::vector<File::Ptr>::iterator end,
+                 std::condition_variable &cv);
 
   void extractFiles(const std::string &targetDirectory,
-                    std::queue<FileInfo> &queue, boost::mutex &mutex,
-                    boost::interprocess::interprocess_semaphore &bufferCount,
-                    boost::interprocess::interprocess_semaphore &queueFree,
-                    int totalFiles, bool overwrite, int &filesDone);
+                    std::queue<FileInfo> &queue, std::mutex &mutex,
+                    Semaphore &bufferCount,
+                    Semaphore &queueFree,
+                    int totalFiles, bool overwrite,
+                    std::condition_variable &cv, int &filesDone);
 private:
 
   mutable std::fstream m_File;
@@ -224,6 +225,9 @@ private:
 
   BSAULong m_ArchiveFlags;
   EType m_Type;
+
+  std::mutex m_ReaderMutex;
+  std::mutex m_ExtractMutex;
 
 };
 
