@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 #include "errorcodes.h"
+#include "bsatype.h"
 #include "bsatypes.h"
 #include "bsafolder.h"
 #include "semaphore.h"
@@ -53,13 +54,6 @@ class File;
 class Archive {
 
 public:
-
-  enum EType {
-    TYPE_OBLIVION,
-    TYPE_FALLOUT3,
-    TYPE_FALLOUTNV = TYPE_FALLOUT3,
-    TYPE_SKYRIM = TYPE_FALLOUT3
-  };
 
   typedef std::pair<std::shared_ptr<unsigned char>, BSAULong> DataBuffer;
 
@@ -150,7 +144,7 @@ private:
 
   struct Header {
     char fileIdentifier[4];
-    Archive::EType type;
+    EType type;
     BSAULong offset;
     BSAULong archiveFlags;
     BSAULong folderCount;

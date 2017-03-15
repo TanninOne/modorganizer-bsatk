@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #define BSAFOLDER_H
 
 
+#include "bsatype.h"
 #include "bsatypes.h"
 #include "bsafile.h"
 #include "errorcodes.h"
@@ -102,12 +103,13 @@ private:
   /**
    * factory function to read a folder object from disc. This also reads part of the information about the files within
    * @param file file stream to read from, already placed at the correct position
+   * @param type the file type / version
    * @param fileNamesLength length of the file names list. This is required to correctly calculate offsets
    * @param endPos position inside file where the last folder header ends. This is
    *               updated by the constructor so that it is the correct value after all folders are read
    * @return the new Folder object
    */
-  Folder::Ptr readFolder(std::fstream &file, BSAULong fileNamesLength, BSAULong &endPos);
+  Folder::Ptr readFolder(std::fstream &file, EType type, BSAULong fileNamesLength, BSAULong &endPos);
 
   /**
    * recursive function to determine the correct subfolder to place the new
@@ -119,7 +121,7 @@ private:
    * add a new folder to the structure. It will automatically be added to the
    * correct sub-folder if applicable
    */
-  Folder::Ptr addFolder(std::fstream &file, BSAULong fileNamesLength, BSAULong &endPos);
+  Folder::Ptr addFolder(std::fstream &file, EType type, BSAULong fileNamesLength, BSAULong &endPos);
 
   bool resolveFileNames(std::fstream &file, bool testHashes);
 

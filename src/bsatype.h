@@ -1,0 +1,16 @@
+#ifndef BSATYPE_H
+#define BSATYPE_H
+
+namespace BSA {
+
+  enum EType {
+    TYPE_OBLIVION,
+    TYPE_FALLOUT3,
+    TYPE_FALLOUTNV = TYPE_FALLOUT3,
+    TYPE_SKYRIM = TYPE_FALLOUT3,
+    TYPE_SKYRIMSE
+  };
+
+}
+
+#endif // BSATYPE_H

@@ -56,11 +56,12 @@ Archive::~Archive()
 }
 
 
-Archive::EType Archive::typeFromID(BSAULong typeID)
+EType Archive::typeFromID(BSAULong typeID)
 {
   switch (typeID) {
     case 0x67: return TYPE_OBLIVION;
     case 0x68: return TYPE_FALLOUT3;
+    case 0x69: return TYPE_SKYRIMSE;
     default: throw data_invalid_exception(makeString("invalid type %d", typeID));
   }
 }
@@ -71,6 +72,7 @@ BSAULong Archive::typeToID(EType type)
   switch (type) {
     case TYPE_OBLIVION: return 0x67;
     case TYPE_FALLOUT3: return 0x68;
+    case TYPE_SKYRIMSE: return 0x69;
     default: throw data_invalid_exception(makeString("invalid type %d", type));
   }
 }
@@ -121,7 +123,7 @@ EErrorCode Archive::read(const char* fileName, bool testHashes)
     std::vector<Folder::Ptr> folders;
 
     for (unsigned long i = 0; i < header.folderCount; ++i) {
-      folders.push_back(m_RootFolder->addFolder(m_File, header.fileNameLength, header.offset));
+      folders.push_back(m_RootFolder->addFolder(m_File, m_Type, header.fileNameLength, header.offset));
     }
 
     m_File.seekg(header.offset);

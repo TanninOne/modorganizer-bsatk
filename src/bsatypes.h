@@ -43,7 +43,6 @@ typedef uint64_t BSAHash;
 
 #endif // WIN32
 
-
 template <typename T> static T readType(std::fstream &file)
 {
   union {

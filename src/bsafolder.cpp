@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "bsaarchive.h"
 #include "bsaexception.h"
 
-
 using std::fstream;
 
 namespace BSA {
@@ -40,13 +39,19 @@ Folder::Folder()
 }
 
 
-Folder::Ptr Folder::readFolder(std::fstream &file, BSAULong fileNamesLength,
-                               BSAULong &endPos)
+Folder::Ptr Folder::readFolder(std::fstream &file, EType type,
+                               BSAULong fileNamesLength, BSAULong &endPos)
 {
   Folder::Ptr result(new Folder());
   result->m_NameHash = readType<BSAHash>(file);
-  result->m_FileCount = readType<unsigned long>(file);
-  result->m_Offset = readType<unsigned long>(file);
+  if (type == TYPE_SKYRIMSE) {
+    result->m_FileCount = readType<uint64_t>(file);
+    result->m_Offset = readType<uint64_t>(file);
+  }
+  else {
+    result->m_FileCount = readType<unsigned long>(file);
+    result->m_Offset = readType<unsigned long>(file);
+  }
   std::streamoff pos = file.tellg();
 
   file.seekg(result->m_Offset - fileNamesLength, fstream::beg);
@@ -153,9 +158,9 @@ void Folder::addFolderInt(Folder::Ptr folder)
 }
 
 
-Folder::Ptr Folder::addFolder(std::fstream &file, BSAULong fileNamesLength, BSAULong &endPos)
+Folder::Ptr Folder::addFolder(std::fstream &file, EType type, BSAULong fileNamesLength, BSAULong &endPos)
 {
-  Folder::Ptr temp = readFolder(file, fileNamesLength, endPos);
+  Folder::Ptr temp = readFolder(file, type, fileNamesLength, endPos);
   addFolderInt(temp);
 
   return temp;
