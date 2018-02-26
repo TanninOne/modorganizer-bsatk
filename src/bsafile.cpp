@@ -60,7 +60,7 @@ File::File(std::fstream &file, Folder *folder)
 
 File::File(const std::string &name, const std::string &sourceFile,
            Folder *folder, bool toggleCompressed)
-  : m_Folder(folder), m_New(true), m_Name(name),
+  : m_Folder(folder), m_New(true), m_Name(name), m_FileSize(0),
     m_ToggleCompressed(toggleCompressed), m_SourceFile(sourceFile),
     m_ToggleCompressedWrite(toggleCompressed)
 {
