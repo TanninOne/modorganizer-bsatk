@@ -100,21 +100,28 @@ Archive::Header Archive::readHeader(std::fstream &infile)
   return result;
 }
 
-
-EErrorCode Archive::read(const char* fileName, bool testHashes)
+EErrorCode Archive::read(const char *fileName, bool testHashes)
 {
   m_File.open(fileName, fstream::in | fstream::binary);
+  return read(testHashes);
+}
+
+#ifdef WIN32
+EErrorCode Archive::read(const wchar_t *fileName, bool testHashes)
+{
+  m_File.open(fileName, fstream::in | fstream::binary);
+  return read(testHashes);
+}
+#endif
+
+EErrorCode Archive::read(bool testHashes) {
   if (!m_File.is_open()) {
     return ERROR_FILENOTFOUND;
   }
   m_File.exceptions(std::ios_base::badbit);
   try {
     Header header;
-    try {
-      header = readHeader(m_File);
-    } catch (const data_invalid_exception &e) {
-      throw data_invalid_exception(makeString("%s (filename: %s)", e.what(), fileName));
-    }
+    header = readHeader(m_File);
 
     m_Type = header.type;
     m_ArchiveFlags = header.archiveFlags;

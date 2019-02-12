@@ -79,6 +79,16 @@ public:
    */
   EErrorCode read(const char *fileName, bool testHashes);
   /**
+   * read the archive from file
+   * @param fileName name of the file to read from
+   * @param testHashes if true, the hashes of file names will be checked to ensure the file is valid.
+   *                    This can be skipped for performance reasons
+   * @return ERROR_NONE on success or an error code
+   */
+#ifdef WIN32
+  EErrorCode read(const wchar_t *fileName, bool testHashes);
+#endif
+  /**
    * write the archive to disc
    * @param fileName name of the file to write to
    * @return ERROR_NONE on success or an error code
@@ -161,6 +171,8 @@ private:
 
 
 private:
+
+  EErrorCode read(bool testHashes);
 
   static Header readHeader(std::fstream &infile);
 
