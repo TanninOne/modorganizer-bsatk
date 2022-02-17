@@ -275,6 +275,7 @@ EErrorCode Archive::write(const char *fileName)
   outfile.exceptions(std::ios_base::badbit);
 
   std::vector<Folder::Ptr> folders;
+  folders.push_back(m_RootFolder);
   m_RootFolder->collectFolders(folders);
 
   std::vector<std::string> folderNames;
