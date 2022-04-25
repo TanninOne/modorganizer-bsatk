@@ -139,6 +139,12 @@ public:
    * @return true if the file is compressed, false otherwise
    */
   bool compressed(const File::Ptr &file);
+
+  /**
+   * @return true if the file stream is still open, false otherwise
+   */
+  bool isOpen();
+
   /**
    * create a new file to be placed in this archive. The new file is NOT
    * added to a folder, use BSA::Folder::addFile for that
