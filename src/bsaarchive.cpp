@@ -663,6 +663,11 @@ bool Archive::compressed(const File::Ptr &file)
           (!defaultCompressed() && file->compressToggled()));
 }
 
+bool Archive::isOpen()
+{
+  return m_File.is_open();
+}
+
 File::Ptr Archive::createFile(const std::string &name, const std::string &sourceName,
                               bool compressed)
 {
