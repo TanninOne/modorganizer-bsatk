@@ -26,15 +26,9 @@ SET(bsatk_HDRS
     bsaarchive.h
   )
 
-SET(Boost_USE_STATIC_LIBS        ON)
-SET(Boost_USE_MULTITHREADED      ON)
-SET(Boost_USE_STATIC_RUNTIME    OFF)
-FIND_PACKAGE(Boost REQUIRED)
-
 FIND_PACKAGE(zlib REQUIRED)
 
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS}
-                    ${ZLIB_INCLUDE_DIRS}
+INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIRS}
                     ${ZLIB_INCLUDE_DIRS}/build) # in case of an out-of-source build
 
 ADD_LIBRARY(bsatk STATIC ${bsatk_HDRS} ${bsatk_SRCS})

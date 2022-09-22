@@ -3,12 +3,10 @@ Import('env')
 env = env.Clone()
 
 env.AppendUnique(CPPDEFINES = [
-    'BOOST_LIB_DIAGNOSTIC',
     'NOMINMAX',
 ])
 
 env.AppendUnique(CPPPATH = [
-    '${BOOSTPATH}',
     '${ZLIBPATH}'
 ])
 
