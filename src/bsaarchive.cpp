@@ -25,14 +25,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <cstring>
 #include <fstream>
 #include <algorithm>
+#include <filesystem>
+#include <thread>
 #include <chrono>
 #include <queue>
 #include <memory>
 #include <mutex>
 #include <zlib.h>
 #include <sys/stat.h>
+#ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#endif
 
 using std::fstream;
 using namespace std::chrono_literals;
@@ -583,9 +587,10 @@ void Archive::createFolders(const std::string &targetDirectory, Folder::Ptr fold
 {
   for (std::vector<Folder::Ptr>::iterator iter = folder->m_SubFolders.begin();
        iter != folder->m_SubFolders.end(); ++iter) {
-    std::string subDirName = targetDirectory + "\\" + (*iter)->getName();
-    ::CreateDirectoryA(subDirName.c_str(), nullptr);
-    createFolders(subDirName, *iter);
+    auto subDirPath = std::filesystem::path(targetDirectory);
+    subDirPath += ((*iter)->getName());
+    std::filesystem::create_directory(subDirPath);
+    createFolders(subDirPath.c_str(), *iter);
   }
 }
 
@@ -615,7 +620,7 @@ EErrorCode Archive::extractAll(const char *outputDirectory,
   std::thread readerThread([&]() {
     this->readFiles(buffers, queueMutex, bufferCount, queueFree, fileList.begin(), fileList.end(), readerCV);
   });
-    
+
   std::thread extractThread([&]() {
     this->extractFiles(outputDirectory, buffers, queueMutex, bufferCount, queueFree, fileList.size(), overwrite, extractCV, filesDone);
   });
