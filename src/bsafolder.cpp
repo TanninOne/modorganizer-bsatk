@@ -35,7 +35,7 @@ Folder::Folder()
 {
   m_NameHash = calculateBSAHash(m_Name);
   m_FileCount = 0;
-  m_Offset = ULONG_MAX;
+  m_Offset = UINT_MAX;
 }
 
 
