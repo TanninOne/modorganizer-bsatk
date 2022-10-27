@@ -590,7 +590,7 @@ void Archive::createFolders(const std::string &targetDirectory, Folder::Ptr fold
     auto subDirPath = std::filesystem::path(targetDirectory);
     subDirPath += ((*iter)->getName());
     std::filesystem::create_directory(subDirPath);
-    createFolders(subDirPath.c_str(), *iter);
+    createFolders(subDirPath.string(), *iter);
   }
 }
 
